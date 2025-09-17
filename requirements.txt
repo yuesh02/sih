@@ -1,0 +1,14 @@
+Flask
+Flask-RESTful
+requests
+beautifulsoup4
+netCDF4
+xarray
+sqlalchemy
+mysql-connector-python
+pandas
+chromadb
+sentence-transformers
+tqdm
+streamlit
+ollama
