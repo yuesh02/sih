@@ -8,7 +8,7 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 collection = client.get_or_create_collection(name="argo_float_profiles")
 
 # print(collection.peek())
-# print(collection.get())
+print(collection.get())
 
 
 
@@ -25,4 +25,4 @@ def get_chunks(query):
     print("🔎 Query Results:")
     print(results['documents'][0][0], "\n\n", results['documents'][0][1], "\n\n", results['documents'][0][2])
 
-get_chunks('what are the approximate temperature and salinity values near the surface and at about 2000 dbar depth, and how do they change with depth?')
+# get_chunks('what are the approximate temperature and salinity values near the surface and at about 2000 dbar depth, and how do they change with depth?')

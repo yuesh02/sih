@@ -119,54 +119,66 @@ class DatabaseManager:
         logging.info("ading profile to chroma.............")
         url = "http://10.176.0.140:11434/api/generate"
 
-        prompt =  f"""
-You are a scientific data summarizer. I will provide you with raw oceanographic data including depth, salinity, temperature, date, and location. Based on this data, generate a concise but informative paragraph that summarizes the key details. The summary should include:
+        lmit_once = len(pressure)//2
 
-When and where the data was collected
-
-The recorded values of depth, salinity, and temperature
-
-A simple interpretation of what these values indicate about the ocean conditions at that time and location.
-
-Here is the raw data:
-cycle:{cycle},
-float id:{float_id_db},
-date and time: {time}
-location : [{lon}, {lat}],
-
-depth: {pressure},
-temperature: {temperature},
-salinity: {salinity}
-"""
-        
-        print(prompt)
-        print("\n\n\n\n")
-        
-        payload = {
-    "model": "llama3:8b",
-    "prompt":prompt
-}
-
-        headers = {
-            "Content-Type": "application/json"
-        }
-
-        response = requests.post(url, data=json.dumps(payload), headers=headers, stream=True)
-
+        limit_arr = [0, lmit_once, -1]
         summary_text = ''
 
-        # Ollama streams output line by line (JSON objects)
-        for line in response.iter_lines():
-            if line:
-                data = json.loads(line.decode("utf-8"))
-                if "response" in data:
-                    summary_text+=data["response"]
-                if data.get("done", False):
-                    break
-        print(summary_text)
+
+        for i in range(2):
+
+
+                
+
+            prompt =  f"""
+    You are a scientific data summarizer. I will provide you with raw oceanographic data including depth, salinity, temperature, date, and location. Based on this data, generate a concise but informative paragraph that summarizes the key details. The summary should include:
+
+    When and where the data was collected
+
+    The recorded values of depth, salinity, and temperature
+
+    A simple interpretation of what these values indicate about the ocean conditions at that time and location.
+
+    Here is the raw data:
+    cycle:{cycle},
+    float id:{float_id_db},
+    date and time: {time}
+    location : [{lon}, {lat}],
+
+    depth: {pressure[limit_arr[i]:limit_arr[i+1]]},
+    temperature: {temperature[limit_arr[i]:limit_arr[i+1]]},
+    salinity: {salinity[limit_arr[i]:limit_arr[i+1]]}
+
+i need the detailed explanation of the given data. use all the creativity and explain it as lengthy as possible
+    """
+        
+            print(prompt)
+            print("\n\n\n\n")
+            
+            payload = {
+        "model": "llama3.1:8b",
+        "prompt":prompt
+    }
+
+            headers = {
+                "Content-Type": "application/json"
+            }
+
+            response = requests.post(url, data=json.dumps(payload), headers=headers, stream=True)
+
+        
+
+            # Ollama streams output line by line (JSON objects)
+            for line in response.iter_lines():
+                if line:
+                    data = json.loads(line.decode("utf-8"))
+                    if "response" in data:
+                        summary_text+=data["response"]
+                    if data.get("done", False):
+                        break
 
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
+            chunk_size=250,
             chunk_overlap=50,
             length_function=len
         )
